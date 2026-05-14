@@ -1,23 +1,58 @@
 # Bloom
 
-Bloom is a lightweight, pure-Java event bus for internal application events.
+Bloom is a lightweight, pure-Java runtime event bus for internal application
+events.
 
-It is intended for in-process communication between components that should not
-know about each other directly. Bloom is small on purpose: it gives you typed
-publish/subscribe, explicit subscriptions, predictable dispatch rules, and an
-optional Spring integration layer.
+It is intended for in-process communication between runtime objects that should
+not know about each other directly. Bloom is small on purpose: it gives you
+typed publish/subscribe, explicit subscription handles, predictable dispatch
+rules, and optional Spring integration without making Spring the owner of the
+event model.
+
+The important word is runtime. A Bloom bus is a normal Java object: create one,
+pass it to a component, scope it to a feature, wrap it with an async executor,
+replace it in a test, or let a workflow step subscribe for only the time it is
+active.
 
 ## What Bloom Is For
 
 - Publishing domain events inside one JVM.
 - Decoupling modules without introducing a message broker.
+- Creating event buses at runtime for a component, workflow, test, or adapter.
+- Dynamically subscribing and unsubscribing handlers while objects are alive.
 - Building framework adapters that need a minimal event bus SPI.
 - Keeping tests deterministic with a local in-memory bus.
-- Wiring Spring bean methods with `@Subscribe`.
+- Wiring Spring bean methods with `@Subscribe` when the application happens to
+  run inside Spring.
 
 Bloom is not a distributed event system, persistent queue, retry engine, or
 transaction manager. If an event must survive process failure or cross service
 boundaries, use a real messaging system and adapt it separately.
+
+## Why Not Just Spring Events?
+
+Spring already has application events, and they are useful when the event bus is
+part of the Spring `ApplicationContext`. Bloom exists for a different center of
+gravity: runtime-scoped internal events.
+
+Use Spring events when:
+
+- the publisher and listener are Spring-managed beans,
+- the event is naturally application-context-wide,
+- lifecycle and listener discovery should be owned by Spring,
+- you are happy to depend on Spring infrastructure in that layer.
+
+Use Bloom when:
+
+- the code should run without Spring,
+- an event bus needs to be created per runtime object, test, workflow, or module,
+- subscriptions should be explicit handles that can be closed immediately,
+- a component should decide exactly when it starts and stops listening,
+- the same event SPI should work in core Java, Spring, and framework adapters.
+
+In other words, Spring events are application-context events. Bloom events are
+runtime object events. Bloom can be used from Spring, but it does not require
+Spring to define the event boundary.
 
 ## Modules
 
@@ -239,6 +274,9 @@ dependencies, and lifecycle clearer.
 
 ## Spring Integration
 
+`bloom-spring` does not turn Bloom into Spring application events. It simply
+registers Spring bean methods as handlers on a Bloom `EventBus`.
+
 Add `bloom-spring`, enable Bloom, and annotate bean methods:
 
 ```java
@@ -260,10 +298,15 @@ class OrderEventHandlers {
 `@EnableBloom` imports a default `EventBus` if none exists and registers the bean
 post-processor that scans `@Subscribe` methods.
 
+You can also provide your own `EventBus` bean if you want a specific runtime
+scope or an async wrapper.
+
 ## Design Rules
 
 - Keep event classes small and immutable.
 - Treat Bloom events as in-memory notifications, not durable facts.
+- Decide the bus scope deliberately: global JVM bus, feature-local bus,
+  workflow-local bus, test-local bus, or Spring bean.
 - Subscribe to concrete event classes; dispatch is exact-type by design.
 - Keep handler work short when using `LocalEventBus`; long work should move to
   an executor or a service boundary.
