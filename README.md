@@ -122,25 +122,120 @@ asynchronously.
 
 ## Subscriber Helpers
 
+Bloom handlers can be written as lambdas for small cases, but you can also make
+event handling explicit with classes. This is useful when a handler owns
+dependencies, has a lifecycle, or should be easy to find from an IDE or by an
+AI coding assistant.
+
+### Implement `EventHandler<E>` Directly
+
+`EventHandler<E>` is a functional interface, so a handler class only needs one
+method:
+
+```java
+public final class SendWelcomeMailHandler implements EventHandler<UserRegistered> {
+    private final MailService mailService;
+
+    public SendWelcomeMailHandler(MailService mailService) {
+        this.mailService = mailService;
+    }
+
+    @Override
+    public void handle(UserRegistered event) {
+        mailService.sendWelcomeMail(event.userId());
+    }
+}
+
+EventBus bus = LocalEventBus.create();
+SendWelcomeMailHandler handler = new SendWelcomeMailHandler(mailService);
+
+Subscription sub = bus.subscribe(UserRegistered.class, handler);
+bus.publish(new UserRegistered("u-1"));
+```
+
+Use this style when the subscription is owned by application setup code.
+
+### Extend `AbstractTypedEventHandler<E>`
+
+Use `AbstractTypedEventHandler<E>` when the handler object should know its own
+event type and manage its own subscription:
+
+```java
+public final class InventoryReservedHandler
+        extends AbstractTypedEventHandler<InventoryReserved> {
+
+    private final InventoryProjection projection;
+
+    public InventoryReservedHandler(InventoryProjection projection) {
+        super(InventoryReserved.class);
+        this.projection = projection;
+    }
+
+    @Override
+    protected void onEvent(InventoryReserved event) {
+        projection.markInventoryReserved(event.orderId());
+    }
+}
+
+InventoryReservedHandler handler = new InventoryReservedHandler(projection);
+handler.subscribeTo(bus);
+
+// later, when this handler is no longer needed
+handler.close();
+```
+
+This keeps the "one handler handles one event type" rule visible in the class
+itself.
+
+### Group Related Subscriptions
+
 Use `AbstractEventSubscriber` when one object owns several subscriptions:
 
 ```java
 public final class OrderProjection extends AbstractEventSubscriber {
-    public OrderProjection(EventBus bus) {
+    private final OrderReadModel readModel;
+
+    public OrderProjection(EventBus bus, OrderReadModel readModel) {
+        this.readModel = readModel;
         on(bus, OrderPlaced.class, this::onOrderPlaced);
         on(bus, OrderPaid.class, this::onOrderPaid);
+        on(bus, OrderCancelled.class, this::onOrderCancelled);
     }
 
-    private void onOrderPlaced(OrderPlaced event) { }
+    private void onOrderPlaced(OrderPlaced event) {
+        readModel.create(event.orderId());
+    }
 
-    private void onOrderPaid(OrderPaid event) { }
+    private void onOrderPaid(OrderPaid event) {
+        readModel.markPaid(event.orderId());
+    }
+
+    private void onOrderCancelled(OrderCancelled event) {
+        readModel.markCancelled(event.orderId());
+    }
 }
 ```
 
-Calling `close()` releases every tracked subscription.
+Calling `close()` releases every tracked subscription:
 
-Use `AbstractTypedEventHandler<E>` when a handler object represents exactly one
-event type and should be able to subscribe/unsubscribe itself.
+```java
+OrderProjection projection = new OrderProjection(bus, readModel);
+
+// later
+projection.close();
+```
+
+Use this style for read models, in-memory projections, adapters, or components
+that naturally listen to a small group of related events.
+
+For very small examples, lambdas are still fine:
+
+```java
+bus.subscribe(OrderPlaced.class, event -> readModel.create(event.orderId()));
+```
+
+For production code, prefer named handler classes when that makes ownership,
+dependencies, and lifecycle clearer.
 
 ## Spring Integration
 
