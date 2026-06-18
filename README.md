@@ -3,11 +3,13 @@
 Bloom is a lightweight, pure-Java runtime event bus for internal application
 events.
 
-It is intended for in-process communication between runtime objects that should
-not know about each other directly. Bloom is small on purpose: it gives you
-typed publish/subscribe, explicit subscription handles, predictable dispatch
-rules, and optional Spring integration without making Spring the owner of the
-event model.
+It is part of the Flower JVM ecosystem, but it is not Flower itself. Flower owns
+workflow structure and execution. Bloom only carries in-process events between
+objects that should not know about each other directly.
+
+Bloom is small on purpose: it gives you typed publish/subscribe, explicit
+subscription handles, predictable dispatch rules, and optional Spring
+integration without making Spring the owner of the event model.
 
 The important word is runtime. A Bloom bus is a normal Java object: create one,
 pass it to a component, scope it to a feature, wrap it with an async executor,
@@ -29,11 +31,11 @@ Bloom is not a distributed event system, persistent queue, retry engine, or
 transaction manager. If an event must survive process failure or cross service
 boundaries, use a real messaging system and adapt it separately.
 
-## Position In The Flower Ecosystem
+## Position In Flower JVM
 
 Bloom is small infrastructure, not the main runtime.
 
-In the Flower ecosystem, the rough split is:
+In Flower JVM, the rough split is:
 
 ```text
 Flower
@@ -63,6 +65,13 @@ domain event -> publish event -> projection/listener updates
 Bloom should stay boring. It is the in-memory event pipe. It should not become
 the workflow engine, policy engine, AI harness, message broker, or durable audit
 log.
+
+## Repositories
+
+- Flower runtime: <https://github.com/flowerjvm/flower>
+- Bloom event bus: <https://github.com/flowerjvm/bloom>
+- AI Harness: <https://github.com/flowerjvm/flower-ai-harness>
+- Samples: <https://github.com/flowerjvm/flower-sample>
 
 ## AI-Era Positioning
 
@@ -387,7 +396,14 @@ scope or an async wrapper.
 
 ## Build
 
+Artifacts are not published to Maven Central yet. Until then, install Bloom
+locally before building projects that depend on it:
+
 ```bash
 mvn test
 mvn install
 ```
+
+## License
+
+Apache License 2.0.
