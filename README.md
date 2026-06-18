@@ -29,6 +29,77 @@ Bloom is not a distributed event system, persistent queue, retry engine, or
 transaction manager. If an event must survive process failure or cross service
 boundaries, use a real messaging system and adapt it separately.
 
+## Position In The Flower Ecosystem
+
+Bloom is small infrastructure, not the main runtime.
+
+In the Flower ecosystem, the rough split is:
+
+```text
+Flower
+  owns workflow structure, Flow / Step state, ticking, checkpoint, recovery,
+  and lifecycle.
+
+Bloom
+  carries in-memory runtime notifications between objects that should not know
+  about each other directly.
+```
+
+Flower does not need Bloom to exist. `flower-core` has its own minimal
+`EventBus` SPI and default in-memory implementation. Bloom becomes useful when
+an application wants a slightly more general runtime event bus that can also be
+used outside Flower, or when a Flower runtime wants to share events with other
+application components through the `flower-bloom-adapter`.
+
+Typical Flower-related uses:
+
+```text
+external callback -> publish event -> waiting Flower step receives signal
+approval decision -> publish event -> approval step continues
+tool/model result -> publish event -> workflow advances
+domain event -> publish event -> projection/listener updates
+```
+
+Bloom should stay boring. It is the in-memory event pipe. It should not become
+the workflow engine, policy engine, AI harness, message broker, or durable audit
+log.
+
+## AI-Era Positioning
+
+Bloom is not an AI framework.
+
+Its role in AI-enabled applications is ordinary but useful: AI and agent
+systems produce many asynchronous callbacks and internal notifications. Bloom
+can carry those notifications inside one JVM while keeping publishers and
+listeners loosely coupled.
+
+Examples:
+
+```text
+LLM response received
+MCP tool call completed
+human approval approved/rejected
+agent action proposal created
+workflow state changed
+```
+
+Bloom only transports these events in memory. Higher-level modules should own
+the important decisions:
+
+```text
+flower-ai-harness
+  owns reliable AI call lifecycle.
+
+flower-agent-runtime
+  owns action policy, approval, audit, and controlled execution.
+
+Flower
+  owns workflow execution.
+
+Bloom
+  owns lightweight in-process notification delivery.
+```
+
 ## Why Not Just Spring Events?
 
 Spring already has application events, and they are useful when the event bus is
