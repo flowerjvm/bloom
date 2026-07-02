@@ -51,7 +51,7 @@ Flower does not need Bloom to exist. `flower-core` has its own minimal
 `EventBus` SPI and default in-memory implementation. Bloom becomes useful when
 an application wants a slightly more general runtime event bus that can also be
 used outside Flower, or when a Flower runtime wants to share events with other
-application components through the `flower-bloom-adapter`.
+application components through the optional `bloom-flower-adapter`.
 
 Typical Flower-related uses:
 
@@ -139,6 +139,16 @@ Spring to define the event boundary.
 - `bloom-core`: dependency-free event bus API and implementations.
 - `bloom-spring`: Spring Framework integration with `@EnableBloom` and
   `@Subscribe`.
+- `bloom-flower-adapter`: optional Flower integration that exposes a Bloom
+  `EventBus` as Flower's `EventBus` SPI.
+
+The Flower adapter is outside the default Maven reactor until Flower artifacts
+are published to Maven Central. Build it explicitly with the `with-flower`
+profile after installing or resolving the matching Flower version:
+
+```bash
+mvn -Pwith-flower -pl bloom-flower-adapter -am verify
+```
 
 ## Core Concepts
 

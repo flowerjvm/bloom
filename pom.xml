@@ -58,6 +58,7 @@
         <assertj.version>3.25.3</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
         <spring.version>5.3.39</spring.version>
+        <flower.version>0.1.0-SNAPSHOT</flower.version>
     </properties>
 
     <dependencyManagement>
@@ -92,8 +93,27 @@
                 <version>${spring.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>io.github.parkkevinsb.flower</groupId>
+                <artifactId>flower-core</artifactId>
+                <version>${flower.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.github.parkkevinsb.flower</groupId>
+                <artifactId>flower-eventloop</artifactId>
+                <version>${flower.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
+
+    <profiles>
+        <profile>
+            <id>with-flower</id>
+            <modules>
+                <module>bloom-flower-adapter</module>
+            </modules>
+        </profile>
+    </profiles>
 
     <build>
         <pluginManagement>
