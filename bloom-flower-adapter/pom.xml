@@ -6,9 +6,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.parkkevinsb</groupId>
+        <groupId>io.github.flowerjvm</groupId>
         <artifactId>bloom-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,16 +23,16 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.parkkevinsb</groupId>
+            <groupId>io.github.flowerjvm</groupId>
             <artifactId>bloom-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>io.github.parkkevinsb.flower</groupId>
+            <groupId>io.github.flowerjvm</groupId>
             <artifactId>flower-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>io.github.parkkevinsb.flower</groupId>
+            <groupId>io.github.flowerjvm</groupId>
             <artifactId>flower-eventloop</artifactId>
             <scope>test</scope>
         </dependency>
@@ -65,7 +65,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Automatic-Module-Name>io.github.parkkevinsb.bloom.flower</Automatic-Module-Name>
+                            <Automatic-Module-Name>io.github.flowerjvm.bloom.flower</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

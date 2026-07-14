@@ -142,12 +142,11 @@ Spring to define the event boundary.
 - `bloom-flower-adapter`: optional Flower integration that exposes a Bloom
   `EventBus` as Flower's `EventBus` SPI.
 
-The Flower adapter is outside the default Maven reactor until Flower artifacts
-are published to Maven Central. Build it explicitly with the `with-flower`
-profile after installing or resolving the matching Flower version:
+The Flower adapter is part of the default Maven reactor and resolves Flower
+`0.1.0` from Maven Central:
 
 ```bash
-mvn -Pwith-flower -pl bloom-flower-adapter -am verify
+mvn -pl bloom-flower-adapter -am verify
 ```
 
 ## Core Concepts
