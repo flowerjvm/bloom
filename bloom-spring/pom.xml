@@ -5,9 +5,9 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>io.github.parkkevinsb</groupId>
+        <groupId>io.github.flowerjvm</groupId>
         <artifactId>bloom-parent</artifactId>
-        <version>0.1.0-SNAPSHOT</version>
+        <version>0.1.0</version>
     </parent>
 
     <artifactId>bloom-spring</artifactId>
@@ -18,7 +18,7 @@
 
     <dependencies>
         <dependency>
-            <groupId>io.github.parkkevinsb</groupId>
+            <groupId>io.github.flowerjvm</groupId>
             <artifactId>bloom-core</artifactId>
             <version>${project.version}</version>
         </dependency>
@@ -60,7 +60,7 @@
                 <configuration>
                     <archive>
                         <manifestEntries>
-                            <Automatic-Module-Name>io.github.parkkevinsb.bloom.spring</Automatic-Module-Name>
+                            <Automatic-Module-Name>io.github.flowerjvm.bloom.spring</Automatic-Module-Name>
                         </manifestEntries>
                     </archive>
                 </configuration>

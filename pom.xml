@@ -4,14 +4,15 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.parkkevinsb</groupId>
+    <groupId>io.github.flowerjvm</groupId>
     <artifactId>bloom-parent</artifactId>
-    <version>0.1.0-SNAPSHOT</version>
+    <version>0.1.0</version>
     <packaging>pom</packaging>
 
     <name>Bloom Parent</name>
     <description>Bloom event bus parent POM</description>
-    <url>https://github.com/parkkevinsb/bloom</url>
+    <url>https://github.com/flowerjvm/bloom</url>
+    <inceptionYear>2026</inceptionYear>
 
     <licenses>
         <license>
@@ -23,27 +24,41 @@
 
     <developers>
         <developer>
-            <id>parkkevinsb</id>
-            <name>Park Kevin SB</name>
+            <id>parkKevinSB</id>
+            <name>Kevin SB Park</name>
             <email>oiltrustkr@gmail.com</email>
+            <url>https://github.com/parkKevinSB</url>
         </developer>
     </developers>
+
+    <scm>
+        <connection>scm:git:https://github.com/flowerjvm/bloom.git</connection>
+        <developerConnection>scm:git:ssh://git@github.com/flowerjvm/bloom.git</developerConnection>
+        <url>https://github.com/flowerjvm/bloom</url>
+        <tag>HEAD</tag>
+    </scm>
+
+    <issueManagement>
+        <system>GitHub</system>
+        <url>https://github.com/flowerjvm/bloom/issues</url>
+    </issueManagement>
 
     <modules>
         <module>bloom-core</module>
         <module>bloom-spring</module>
+        <module>bloom-flower-adapter</module>
     </modules>
 
     <distributionManagement>
         <repository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/parkkevinsb/bloom</url>
+            <url>https://maven.pkg.github.com/flowerjvm/bloom</url>
         </repository>
         <snapshotRepository>
             <id>github</id>
             <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/parkkevinsb/bloom</url>
+            <url>https://maven.pkg.github.com/flowerjvm/bloom</url>
         </snapshotRepository>
     </distributionManagement>
 
@@ -54,11 +69,24 @@
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
 
+        <maven-compiler-plugin.version>3.13.0</maven-compiler-plugin.version>
+        <maven-surefire-plugin.version>3.2.5</maven-surefire-plugin.version>
+        <maven-jar-plugin.version>3.4.2</maven-jar-plugin.version>
+        <maven-source-plugin.version>3.3.1</maven-source-plugin.version>
+        <maven-javadoc-plugin.version>3.10.1</maven-javadoc-plugin.version>
+        <maven-gpg-plugin.version>3.2.8</maven-gpg-plugin.version>
+        <jacoco-maven-plugin.version>0.8.12</jacoco-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
+
+        <central.autoPublish>true</central.autoPublish>
+        <central.skipPublishing>false</central.skipPublishing>
+        <central.waitUntil>published</central.waitUntil>
+
         <junit.version>5.10.2</junit.version>
         <assertj.version>3.25.3</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
         <spring.version>5.3.39</spring.version>
-        <flower.version>0.1.0-SNAPSHOT</flower.version>
+        <flower.version>0.1.0</flower.version>
     </properties>
 
     <dependencyManagement>
@@ -94,26 +122,17 @@
                 <scope>test</scope>
             </dependency>
             <dependency>
-                <groupId>io.github.parkkevinsb.flower</groupId>
+                <groupId>io.github.flowerjvm</groupId>
                 <artifactId>flower-core</artifactId>
                 <version>${flower.version}</version>
             </dependency>
             <dependency>
-                <groupId>io.github.parkkevinsb.flower</groupId>
+                <groupId>io.github.flowerjvm</groupId>
                 <artifactId>flower-eventloop</artifactId>
                 <version>${flower.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
-
-    <profiles>
-        <profile>
-            <id>with-flower</id>
-            <modules>
-                <module>bloom-flower-adapter</module>
-            </modules>
-        </profile>
-    </profiles>
 
     <build>
         <pluginManagement>
@@ -121,7 +140,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.13.0</version>
+                    <version>${maven-compiler-plugin.version}</version>
                     <configuration>
                         <release>${maven.compiler.release}</release>
                         <source>${maven.compiler.source}</source>
@@ -131,29 +150,105 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>3.2.5</version>
+                    <version>${maven-surefire-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-jar-plugin</artifactId>
-                    <version>3.4.1</version>
+                    <version>${maven-jar-plugin.version}</version>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-source-plugin</artifactId>
-                    <version>3.3.1</version>
+                    <version>${maven-source-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <id>attach-sources</id>
+                            <goals>
+                                <goal>jar-no-fork</goal>
+                            </goals>
+                        </execution>
+                    </executions>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.6.3</version>
+                    <version>${maven-javadoc-plugin.version}</version>
+                    <configuration>
+                        <doclint>none</doclint>
+                        <quiet>true</quiet>
+                        <source>${maven.compiler.source}</source>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-gpg-plugin</artifactId>
+                    <version>${maven-gpg-plugin.version}</version>
+                    <configuration>
+                        <bestPractices>true</bestPractices>
+                        <gpgArguments>
+                            <arg>--pinentry-mode</arg>
+                            <arg>loopback</arg>
+                        </gpgArguments>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.jacoco</groupId>
                     <artifactId>jacoco-maven-plugin</artifactId>
-                    <version>0.8.12</version>
+                    <version>${jacoco-maven-plugin.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-source-plugin</artifactId>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-javadoc-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>attach-javadocs</id>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>sign-artifacts</id>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sign</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.sonatype.central</groupId>
+                        <artifactId>central-publishing-maven-plugin</artifactId>
+                        <version>${central-publishing-maven-plugin.version}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                            <publishingServerId>central</publishingServerId>
+                            <autoPublish>${central.autoPublish}</autoPublish>
+                            <skipPublishing>${central.skipPublishing}</skipPublishing>
+                            <waitUntil>${central.waitUntil}</waitUntil>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
