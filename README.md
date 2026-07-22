@@ -143,7 +143,7 @@ Spring to define the event boundary.
   `EventBus` as Flower's `EventBus` SPI.
 
 The Flower adapter is part of the default Maven reactor and resolves Flower
-`0.1.0` from Maven Central:
+`0.1.1` from Maven Central:
 
 ```bash
 mvn -pl bloom-flower-adapter -am verify
