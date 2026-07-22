@@ -22,11 +22,11 @@ other Flower JVM projects. Add these repository secrets before publishing:
 3. Create the matching `v`-prefixed Git tag and GitHub Release.
 4. The release workflow signs and publishes every reactor artifact through the
    Central Publisher Portal, then waits until the deployment is published.
-5. Move `main` to the next development version, such as `0.1.1-SNAPSHOT`.
+5. Move `main` to the next development version, such as `0.1.2-SNAPSHOT`.
 
 Maven Central releases are immutable. The Flower adapter uses the separately
-released `io.github.flowerjvm:flower-core:0.1.0` and
-`io.github.flowerjvm:flower-eventloop:0.1.0` dependencies.
+released `io.github.flowerjvm:flower-core:0.1.1` and
+`io.github.flowerjvm:flower-eventloop:0.1.1` dependencies.
 
 ## Local dry run
 

@@ -86,7 +86,7 @@
         <assertj.version>3.25.3</assertj.version>
         <awaitility.version>4.2.1</awaitility.version>
         <spring.version>5.3.39</spring.version>
-        <flower.version>0.1.0</flower.version>
+        <flower.version>0.1.1</flower.version>
     </properties>
 
     <dependencyManagement>
